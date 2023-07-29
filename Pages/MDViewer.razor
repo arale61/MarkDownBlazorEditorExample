@@ -1,0 +1,24 @@
+@using Markdig
+@using BlazorApp.Data
+
+<div @onclick="NotifyMDLineSelected">
+@((MarkupString)HtmlContent)
+</div>
+
+@code {
+    [Parameter]
+    public MDLine Line { get; set; }
+
+    [Parameter]
+    public EventCallback<int> LineSelected { get; set; }
+
+    [Parameter]
+    public MarkdownPipeline MDPipeline { get; set; }
+
+    private string HtmlContent { get { return Markdown.ToHtml(Line.Content, MDPipeline); } }
+
+    private void NotifyMDLineSelected(MouseEventArgs e)
+    {
+        LineSelected.InvokeAsync(Line.Position);
+    }
+}

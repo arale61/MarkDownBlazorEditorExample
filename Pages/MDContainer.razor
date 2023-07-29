@@ -1,0 +1,57 @@
+﻿@page "/mdcontainer"
+
+<PageTitle>Markdown Editor</PageTitle>
+
+@using Markdig
+@using BlazorApp.Data
+
+<h1>Markdown Editor</h1>
+<br/>
+<div class="container-fluid">
+<h6>
+    <p style="text-align:right">By Arale61</p>
+</h6>
+<br />
+@foreach(var line in lines)
+{
+    if(currentLine == line.Position)
+    {
+        <MDEdit Line="@line" MDLineEdited="LineEdited" />
+    }
+    else
+    {
+        <MDViewer Line="@line" LineSelected="NewLineSelected" MDPipeline="@pipeline"/>
+    }
+}
+</div>
+<br/>
+
+@code {
+    private List<MDLine> lines = new List<MDLine>() { new MDLine(0,"# Test"), new MDLine(1,"## Test 2"), new MDLine(2,"### Test 3") };
+    private int currentLine = -1;
+    private MDLine lastLineEdited = null;
+    private MarkdownPipeline pipeline = new MarkdownPipelineBuilder().UseAdvancedExtensions().Build();
+
+    private void NewLineSelected(int lineNumber)
+    {
+        currentLine = lineNumber;
+    }
+
+    private void LineEdited(MDLine line)
+    {
+        var rem = lines.Count() - 1 - line.Position;
+        if (rem > 0)
+        {
+            var firstPart = lines.Where((l)=>l.Position <= line.Position).ToList();
+            firstPart.Add(new MDLine(line.Position + 1, ""));
+            var secondPart = lines.Where((l)=>l.Position > line.Position).Select((l)=>new MDLine(l.Position +1, l.Content)).ToList();
+            firstPart.AddRange(secondPart);
+            lines = firstPart;
+        }else if (rem == 0)
+        {
+            lines.Add(new MDLine(line.Position + 1, ""));
+        }
+
+        currentLine = line.Position + 1;
+    }
+}

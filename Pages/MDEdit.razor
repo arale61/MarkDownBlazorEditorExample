@@ -1,0 +1,52 @@
+@using BlazorApp.Data
+
+<p>
+    <textarea class="form-control" @bind-value:event="oninput" @bind-value="Line.Content" @onkeydown="NotifyMDLineEdited" @onkeydown:preventDefault="useTab"/>
+</p>
+
+
+@code {
+    [Parameter]
+    public MDLine Line { get; set; }
+
+    [Parameter]
+    public EventCallback<MDLine> MDLineEdited { get; set; }
+
+    private bool useTab = false;
+    private bool shiftMode = false;
+    private DateTime? shiftModeTime = null;
+
+    private void NotifyMDLineEdited(KeyboardEventArgs e)
+    {
+        if(e.Key == "Shift")
+        {
+            shiftMode = true;
+            shiftModeTime = DateTime.Now;
+        }
+        else if (e.Key == "Enter")
+        {
+            if(!shiftMode || (DateTime.Now - shiftModeTime)?.TotalSeconds > 1.5)
+            {
+                useTab = false;
+                shiftMode = false;
+                MDLineEdited.InvokeAsync(Line);
+            }
+            else
+            {
+                useTab = true;
+                shiftMode = true;
+            }
+        }
+        else if (e.Key == "Tab")
+        {
+            useTab = true;
+            shiftMode = false;
+            Line.Content += "\t";
+        }
+        else
+        {
+            useTab = false;
+            shiftMode = false;
+        }
+    }
+}
