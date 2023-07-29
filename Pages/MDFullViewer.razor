@@ -1,0 +1,21 @@
+@using BlazorApp.Data
+
+<p>
+    <textarea @bind="rawContent" style="height:800px;width:90%"></textarea>
+</p>
+
+@code {
+    [Parameter]
+    public List<MDLine> Lines { get; set; } = new List<MDLine>();
+
+    private string rawContent = string.Empty;
+
+    protected override void OnParametersSet()
+    {
+        var contents = Lines
+            .Where(l => !string.IsNullOrEmpty(l.Content.Trim()))
+            .Select((l) => l.Content.TrimEnd()).ToList();
+
+        rawContent = String.Join("\n", contents);
+    }
+}

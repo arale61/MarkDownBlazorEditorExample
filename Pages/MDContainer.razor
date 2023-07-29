@@ -20,11 +20,15 @@
     }
     else
     {
-        <MDViewer Line="@line" LineSelected="NewLineSelected" MDPipeline="@pipeline"/>
+        <MDViewer Line="@line" LineSelected="NewLineSelected" MDPipeline="@pipeline" />
     }
 }
 </div>
 <br/>
+<p>Full Markdown code:</p>
+<div class="container-fluid">
+    <MDFullViewer Lines="@lines" />
+</div>
 
 @code {
     private List<MDLine> lines = new List<MDLine>() { new MDLine(0,"# Test"), new MDLine(1,"## Test 2"), new MDLine(2,"### Test 3") };
@@ -44,7 +48,7 @@
         {
             var firstPart = lines.Where((l)=>l.Position <= line.Position).ToList();
             firstPart.Add(new MDLine(line.Position + 1, ""));
-            var secondPart = lines.Where((l)=>l.Position > line.Position).Select((l)=>new MDLine(l.Position +1, l.Content)).ToList();
+            var secondPart = lines.Where((l)=>l.Position > line.Position).Select((l)=>new MDLine(l.Position +1, l.Content.TrimEnd())).ToList();
             firstPart.AddRange(secondPart);
             lines = firstPart;
         }else if (rem == 0)

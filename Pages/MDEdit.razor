@@ -1,7 +1,12 @@
 @using BlazorApp.Data
 
 <p>
-    <textarea class="form-control" @bind-value:event="oninput" @bind-value="Line.Content" @onkeydown="NotifyMDLineEdited" @onkeydown:preventDefault="useTab"/>
+    <textarea 
+        class="form-control" 
+        @bind-value:event="oninput" 
+        @bind-value="Line.Content" 
+        @onkeydown="NotifyMDLineEdited" 
+        @onkeydown:preventDefault="useTab" />
 </p>
 
 
@@ -20,6 +25,7 @@
     {
         if(e.Key == "Shift")
         {
+            useTab = false;
             shiftMode = true;
             shiftModeTime = DateTime.Now;
         }
