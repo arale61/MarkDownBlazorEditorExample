@@ -10,6 +10,6 @@ public class MDBlock
         this.Content = content;
     }
 
-    public int Position {get;set;}
-    public string Content {get;set;}
+    public int Position {get;set;} = 0;
+    public string Content {get;set;} = string.Empty;
 }
