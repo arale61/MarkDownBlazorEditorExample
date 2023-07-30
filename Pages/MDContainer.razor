@@ -66,11 +66,13 @@
 
     private void BlockEdited(MDBlock block)
     {
-        Model.HandleBlockEdited(block);
-
-        if (block.Position + 1 < Model.GetBlocks().Count())
+        if (Model.HandleBlockEdited(block))
         {
             currentBlockIndex = block.Position + 1;
+        } 
+        else
+        {
+            currentBlockIndex = -1;
         }
     }
 }
