@@ -2,9 +2,9 @@ using Markdig;
 
 namespace BlazorApp.Data;
 
-public class MDLine
+public class MDBlock
 {
-    public MDLine(int position, string content)
+    public MDBlock(int position, string content)
     {
         this.Position = position;
         this.Content = content;

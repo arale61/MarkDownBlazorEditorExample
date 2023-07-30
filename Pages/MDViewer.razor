@@ -1,13 +1,13 @@
 @using Markdig
 @using BlazorApp.Data
 
-<div @onclick="NotifyMDLineSelected">
+<div class="px-2" @onclick="NotifyMDLineSelected">
 @((MarkupString)HtmlContent)
 </div>
 
 @code {
     [Parameter]
-    public MDLine Line { get; set; }
+    public MDBlock Line { get; set; }
 
     [Parameter]
     public EventCallback<int> LineSelected { get; set; }

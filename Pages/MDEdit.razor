@@ -3,25 +3,46 @@
 <p>
     <textarea 
         class="form-control" 
+        rows="@rows"
         @bind-value:event="oninput" 
-        @bind-value="Line.Content" 
-        @onkeydown="NotifyMDLineEdited" 
+        @bind-value="Block.Content" 
+        @onkeydown="NotifyMDBlockEdited" 
         @onkeydown:preventDefault="useTab" />
 </p>
 
 
 @code {
     [Parameter]
-    public MDLine Line { get; set; }
+    public MDBlock Block { get; set; }
+
+    private int rows { 
+        get 
+        {
+            return Block.Content.Split("\n").Count() + 1;
+        }
+        set
+        {
+
+        }
+    }
 
     [Parameter]
-    public EventCallback<MDLine> MDLineEdited { get; set; }
+    public EventCallback<MDBlock> MDBlockEdited { get; set; }
 
     private bool useTab = false;
     private bool shiftMode = false;
     private DateTime? shiftModeTime = null;
 
-    private void NotifyMDLineEdited(KeyboardEventArgs e)
+    private void CleanTailingNewLines()
+    {
+        while(  Block.Content.EndsWith('\r') ||
+                Block.Content.EndsWith('\n'))
+        {
+            Block.Content = Block.Content.TrimEnd('\r', '\n');
+        }
+    }
+
+    private void NotifyMDBlockEdited(KeyboardEventArgs e)
     {
         if(e.Key == "Shift")
         {
@@ -33,9 +54,10 @@
         {
             if(!shiftMode || (DateTime.Now - shiftModeTime)?.TotalSeconds > 1.5)
             {
+                CleanTailingNewLines();
                 useTab = false;
                 shiftMode = false;
-                MDLineEdited.InvokeAsync(Line);
+                MDBlockEdited.InvokeAsync(Block);
             }
             else
             {
@@ -47,7 +69,7 @@
         {
             useTab = true;
             shiftMode = false;
-            Line.Content += "\t";
+            Block.Content += "\t";
         }
         else
         {

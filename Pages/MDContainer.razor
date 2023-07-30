@@ -7,55 +7,90 @@
 
 <h1>Markdown Editor</h1>
 <br/>
-<div class="container-fluid">
-<h6>
-    <p style="text-align:right">By Arale61</p>
-</h6>
+<dl>
+  <dt>Blocks</dt>
+  <dd>Create by blocks your <strong>Markdown</strong> file.</dd>
+  <dt>Logical Structure</dt>
+  <dd>Create as appropiate the blocks composing your document.</dd>
+  <dt>Usage</dt>
+  <dd>Inside a block you can add new lines pressing <kbd><kbd>ctrl</kbd> + <kbd>enter</kbd></kbd></dd>
+  <dd>Inside a block you can add <strong>tabs</strong> pressing <kbd>tab</kbd>. <em>(todo: reset cursor position)</em></dd>
+</dl>
+
+<div class="container-fluid border border-bottom-0">
 <br />
-@foreach(var line in lines)
+@foreach(var block in Blocks)
 {
-    if(currentLine == line.Position)
+    if(currentBlockIndex == block.Position)
     {
-        <MDEdit Line="@line" MDLineEdited="LineEdited" />
+        <MDEdit Block="@block" MDBlockEdited="BlockEdited" />
     }
     else
     {
-        <MDViewer Line="@line" LineSelected="NewLineSelected" MDPipeline="@pipeline" />
+        <MDViewer Line="@block" LineSelected="NewBlockSelected" MDPipeline="@pipeline" />
     }
 }
 </div>
 <br/>
-<p>Full Markdown code:</p>
+
+<h2>Full Markdown code</h2>
+
+<br />
+
 <div class="container-fluid">
-    <MDFullViewer Lines="@lines" />
+    <MDFullViewer Blocks="@Blocks" />
 </div>
 
 @code {
-    private List<MDLine> lines = new List<MDLine>() { new MDLine(0,"# Test"), new MDLine(1,"## Test 2"), new MDLine(2,"### Test 3") };
-    private int currentLine = -1;
-    private MDLine lastLineEdited = null;
+    private List<MDBlock> blocks = new List<MDBlock>() { new MDBlock(0,"# Test"), new MDBlock(1,"## Test 2"), new MDBlock(2,"### Test 3") };
+    
+    private List<MDBlock> Blocks 
+    {
+        get
+        {
+            return blocks.Where((b)=>!string.IsNullOrWhiteSpace(b.Content.Trim('\r','\n')) || b.Position == currentBlockIndex).ToList();
+        }
+        set
+        {
+            if(value != null)
+            {
+                blocks = value.Where((b)=>!string.IsNullOrWhiteSpace(b.Content.Trim('\r','\n'))).ToList();
+            }
+        }
+    }
+    private int currentBlockIndex = -1;
+    private MDBlock lastLineEdited = null;
     private MarkdownPipeline pipeline = new MarkdownPipelineBuilder().UseAdvancedExtensions().Build();
 
-    private void NewLineSelected(int lineNumber)
+    private void NewBlockSelected(int blockNumber)
     {
-        currentLine = lineNumber;
+        currentBlockIndex = blockNumber;
     }
 
-    private void LineEdited(MDLine line)
+    private void BlockEdited(MDBlock block)
     {
-        var rem = lines.Count() - 1 - line.Position;
-        if (rem > 0)
+        var rem = blocks.Count() - 1 - block.Position;
+
+        if(string.IsNullOrEmpty(block.Content.Trim()))
         {
-            var firstPart = lines.Where((l)=>l.Position <= line.Position).ToList();
-            firstPart.Add(new MDLine(line.Position + 1, ""));
-            var secondPart = lines.Where((l)=>l.Position > line.Position).Select((l)=>new MDLine(l.Position +1, l.Content.TrimEnd())).ToList();
-            firstPart.AddRange(secondPart);
-            lines = firstPart;
-        }else if (rem == 0)
-        {
-            lines.Add(new MDLine(line.Position + 1, ""));
+            blocks.Remove(block);
         }
 
-        currentLine = line.Position + 1;
+        if (rem > 0)
+        {
+            var firstPart = blocks.Where((l)=>l.Position <= block.Position).ToList();
+            firstPart.Add(new MDBlock(block.Position + 1, ""));
+            var secondPart = blocks
+                .Where((l)=>l.Position > block.Position && !string.IsNullOrWhiteSpace(block.Content.Trim('\r','\n')))
+                .Select((l)=>new MDBlock(l.Position +1, l.Content))
+                .ToList();
+            firstPart.AddRange(secondPart);
+            blocks = firstPart;
+        }else if (rem == 0)
+        {
+            blocks.Add(new MDBlock(block.Position + 1, ""));
+        }
+
+        currentBlockIndex = block.Position + 1;
     }
 }

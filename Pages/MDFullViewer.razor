@@ -1,20 +1,56 @@
 @using BlazorApp.Data
-
+Number of Blocks: <input @bind="numberOfBlocks" class="form-control" readonly />
+Number of rows: <input @bind="rows" class="form-control" readonly />
+<br />
+Code:
+<br />
+<br />
 <p>
-    <textarea @bind="rawContent" style="height:800px;width:90%"></textarea>
+    <textarea 
+        @bind="rawContent" 
+        rows="@rows"
+        class="form-control"
+        readonly
+        ></textarea>
 </p>
 
 @code {
     [Parameter]
-    public List<MDLine> Lines { get; set; } = new List<MDLine>();
+    public List<MDBlock> Blocks { get; set; } = new List<MDBlock>();
 
     private string rawContent = string.Empty;
 
+    private int numberOfBlocks
+    {
+        get
+        {
+            return Blocks.Count();
+        }
+        set
+        {
+
+        }
+
+    }
+
+    private int rows 
+    { 
+        get 
+        {
+            return Blocks
+                    .Sum((b)=>b.Content.Split("\n").Count()) + 1;
+        }
+        set
+        {
+
+        }
+    } 
+
     protected override void OnParametersSet()
     {
-        var contents = Lines
-            .Where(l => !string.IsNullOrEmpty(l.Content.Trim()))
-            .Select((l) => l.Content.TrimEnd()).ToList();
+        var contents = Blocks
+            .Where(b => !string.IsNullOrEmpty(b.Content.Trim('\r','\n')))
+            .Select((b) => $"{b.Content}").ToList();
 
         rawContent = String.Join("\n", contents);
     }
