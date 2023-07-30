@@ -1,5 +1,10 @@
 # MarkDown Blazor Editor Example
 
+## This is just an example
+This example uses [**Markdig**](https://github.com/xoofx/markdig) as the **Markdown parser**.
+
+[**Markdig**](https://github.com/xoofx/markdig) is licensed with [BSD-Clause 2 license](https://github.com/xoofx/markdig/blob/master/license.txt).
+
 ## Motivation
 After being watching some **#viciostv** was curious about **Markdig** and also about **Blazor**.
 I drafted this simple sample for it.
@@ -29,7 +34,4 @@ Use the following Cheatsheet for your tests:
 
 ## Known Bugs
 
-- The usage of **tab** fails when in editor mode.
-- The auto-focus for editor component not working.
-- When copy paste a list and try to put new **tab** on some item fails.
-- Some other minor issues.
+- The usage of **tab** and cursor update.
