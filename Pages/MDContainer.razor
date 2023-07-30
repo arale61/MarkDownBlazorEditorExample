@@ -52,10 +52,7 @@
         }
         set
         {
-            if(value != null)
-            {
-                blocks = value.Where((b)=>!string.IsNullOrWhiteSpace(b.Content.Trim('\r','\n'))).ToList();
-            }
+            
         }
     }
     private int currentBlockIndex = -1;
@@ -71,17 +68,12 @@
     {
         var rem = blocks.Count() - 1 - block.Position;
 
-        if(string.IsNullOrEmpty(block.Content.Trim()))
-        {
-            blocks.Remove(block);
-        }
-
         if (rem > 0)
         {
             var firstPart = blocks.Where((l)=>l.Position <= block.Position).ToList();
             firstPart.Add(new MDBlock(block.Position + 1, ""));
             var secondPart = blocks
-                .Where((l)=>l.Position > block.Position && !string.IsNullOrWhiteSpace(block.Content.Trim('\r','\n')))
+                .Where((l)=>l.Position > block.Position)
                 .Select((l)=>new MDBlock(l.Position +1, l.Content))
                 .ToList();
             firstPart.AddRange(secondPart);

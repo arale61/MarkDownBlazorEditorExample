@@ -52,7 +52,7 @@
         }
         else if (e.Key == "Enter")
         {
-            if(!shiftMode || (DateTime.Now - shiftModeTime)?.TotalSeconds > 1.5)
+            if(!shiftMode || (DateTime.Now - shiftModeTime)?.TotalSeconds > 1)
             {
                 CleanTailingNewLines();
                 useTab = false;
