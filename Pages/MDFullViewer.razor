@@ -1,4 +1,6 @@
 @using BlazorApp.Data
+
+<div class="container-fluid">
 Number of Blocks: <input @bind="numberOfBlocks" class="form-control" readonly />
 Number of rows: <input @bind="rows" class="form-control" readonly />
 <br />
@@ -13,6 +15,7 @@ Code:
         readonly
         ></textarea>
 </p>
+</div>
 
 @code {
     [Parameter]
