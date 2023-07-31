@@ -4,6 +4,7 @@ namespace BlazorApp.Data;
 
 public class MDBlock
 {
+    public MDBlock() { }
     public MDBlock(int position, string content)
     {
         this.Position = position;

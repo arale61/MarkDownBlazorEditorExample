@@ -106,4 +106,9 @@ public class MDBlockModel
             .Where((b)=>!string.IsNullOrWhiteSpace(b.Content.Trim('\r','\n')))
             .ToList();
     }
+
+    public void SetBlocks(List<MDBlock> blocks_r)
+    {
+        blocks = blocks_r;
+    }
 }

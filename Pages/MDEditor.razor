@@ -22,13 +22,8 @@
     [Parameter]
     public EventCallback<MDBlockModel> MDMarkdownChangedNotification { get; set; }
 
-    private MDBlockModel Model = new MDBlockModel(
-        new List<MDBlock>() 
-            { 
-                new MDBlock(0,"# Test"), 
-                new MDBlock(1,"## Test 2"), 
-                new MDBlock(2,"### Test 3") 
-            });
+    [Parameter]
+    public MDBlockModel Model { get;set; }
 
 
     private MarkdownPipeline pipeline = new MarkdownPipelineBuilder().UseAdvancedExtensions().Build();

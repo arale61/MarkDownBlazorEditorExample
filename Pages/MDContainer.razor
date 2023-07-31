@@ -1,9 +1,12 @@
 ﻿@page "/mdcontainer"
 
+@using BlazorApp.Data
+@using Blazored.LocalStorage
+
+@inject ILocalStorageService _localstorage;
+
 <PageTitle>Markdown Editor</PageTitle>
 
-@using Markdig
-@using BlazorApp.Data
 
 <h1>Markdown Editor Example</h1>
 
@@ -21,7 +24,7 @@
 
     <br />
 
-    <MDEditor MDMarkdownChangedNotification="MarkdownChanged"  />
+    <MDEditor MDMarkdownChangedNotification="MarkdownChanged" Model="@Model" />
     <br/>
 
     <h2>Full Markdown code</h2>
@@ -29,7 +32,12 @@
     <br />
 
     <p class="text-success"><em>@lastEditedMessage</em></p>
-
+    <p class="text-success"><em>@lastStoredLocalMessage</em></p>
+    <span>
+        <button @onclick="StoreToLocalStorageAsync">Store at LocalStorage</button>
+        <br />
+        <br />
+    </span>
     <MDFullViewer Model="@Model" />
 </div>
 
@@ -38,9 +46,32 @@
 
     private string lastEditedMessage = string.Empty;
 
+    private string lastStoredLocalMessage = string.Empty;
+
     private void MarkdownChanged(MDBlockModel lastMarkDown)
     {
         this.Model = lastMarkDown;
         lastEditedMessage = $"Edited on {DateTime.Now.ToLongTimeString()} at block #{lastMarkDown.LastEditedBlock?.Position}";
+        @* StateHasChanged(); *@
+    }
+
+    public async void StoreToLocalStorageAsync()
+    {
+        await _localstorage.SetItemAsync<List<MDBlock>>("MBBlocks", Model.GetBlocks());
+        lastStoredLocalMessage = $"Stored at {DateTime.Now.ToLongTimeString()}";
+        StateHasChanged();
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if(firstRender)
+        {
+            var blocks = await _localstorage.GetItemAsync<List<MDBlock>>("MBBlocks");
+            if(blocks != null)
+            {
+                Model.SetBlocks(blocks);
+                StateHasChanged();
+            }
+        }
     }
 }
