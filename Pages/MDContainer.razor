@@ -37,6 +37,9 @@
         <button @onclick="StoreToLocalStorageAsync">Store at LocalStorage</button>
         <br />
         <br />
+        <button @onclick="ClearLocalStorageAsync">Clear LocalStorage</button>
+        <br />
+        <br />
     </span>
     <MDFullViewer Model="@Model" />
 </div>
@@ -57,8 +60,16 @@
 
     public async void StoreToLocalStorageAsync()
     {
-        await _localstorage.SetItemAsync<List<MDBlock>>("MBBlocks", Model.GetBlocks());
+        await _localstorage.SetItemAsync<List<MDBlock>>("MDBlocks", Model.GetBlocks());
         lastStoredLocalMessage = $"Stored at {DateTime.Now.ToLongTimeString()}";
+        StateHasChanged();
+    }
+
+    public async void ClearLocalStorageAsync()
+    {
+        await _localstorage.ClearAsync();
+        this.Model = new MDBlockModel(new List<MDBlock>() { new MDBlock(0,"# Test"), new MDBlock(1,"## Test 2"), new MDBlock(2,"### Test 3") });
+        lastStoredLocalMessage = $"Cleared at {DateTime.Now.ToLongTimeString()}";
         StateHasChanged();
     }
 
@@ -66,7 +77,7 @@
     {
         if(firstRender)
         {
-            var blocks = await _localstorage.GetItemAsync<List<MDBlock>>("MBBlocks");
+            var blocks = await _localstorage.GetItemAsync<List<MDBlock>>("MDBlocks");
             if(blocks != null)
             {
                 Model.SetBlocks(blocks);
