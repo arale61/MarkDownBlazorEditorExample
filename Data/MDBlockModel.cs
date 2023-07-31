@@ -99,4 +99,11 @@ public class MDBlockModel
 
         return String.Join("\n", rcontents);
     }
+
+    public void CleanAllEmptyBlocks()
+    {
+        blocks = blocks
+            .Where((b)=>!string.IsNullOrWhiteSpace(b.Content.Trim('\r','\n')))
+            .ToList();
+    }
 }

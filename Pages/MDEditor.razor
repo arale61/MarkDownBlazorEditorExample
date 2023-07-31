@@ -43,6 +43,8 @@
     private void NewBlockSelected(int blockNumber)
     {
         currentBlockIndex = blockNumber;
+        Model.CleanAllEmptyBlocks();
+        MDMarkdownChangedNotification.InvokeAsync(Model);
     }
 
     private int currentBlockIndex = -1;
@@ -55,6 +57,7 @@
         }
         else if(Model.GetBlocks().Count() == 1 && string.IsNullOrEmpty(block.Content.Trim('\r','\n')))
         {
+            block.Content = block.Content.Trim('\r','\n');
             currentBlockIndex = block.Position;
         }
         else
