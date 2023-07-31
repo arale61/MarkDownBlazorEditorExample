@@ -1,0 +1,63 @@
+@using BlazorApp.Data
+@using Markdig
+
+<div class="container-fluid border border-bottom-0">
+<br />
+@foreach(var block in GetBlocks())
+{
+    if(currentBlockIndex == block.Position)
+    {
+        <MDEdit Block="@block" MDBlockEdited="BlockEdited" />
+    }
+    else
+    {
+        <MDViewer Block="@block" BlockSelected="NewBlockSelected" MDPipeline="@pipeline" />
+    }
+}
+</div>
+
+
+@code {
+    
+    [Parameter]
+    public EventCallback<MDBlockModel> MDMarkdownChangedNotification { get; set; }
+
+    private MDBlockModel Model = new MDBlockModel(
+        new List<MDBlock>() 
+            { 
+                new MDBlock(0,"# Test"), 
+                new MDBlock(1,"## Test 2"), 
+                new MDBlock(2,"### Test 3") 
+            });
+
+
+    private MarkdownPipeline pipeline = new MarkdownPipelineBuilder().UseAdvancedExtensions().Build();
+    private List<MDBlock> GetBlocks() 
+    {
+        return Model
+            .GetBlocks()
+            .Where((b)=>!string.IsNullOrWhiteSpace(b.Content.Trim('\r','\n')) || b.Position == currentBlockIndex)
+            .ToList();
+    }
+
+    private void NewBlockSelected(int blockNumber)
+    {
+        currentBlockIndex = blockNumber;
+    }
+
+    private int currentBlockIndex = -1;
+
+    private void BlockEdited(MDBlock block)
+    {
+        if (Model.HandleBlockEdited(block))
+        {
+            currentBlockIndex = block.Position + 1;
+        } 
+        else
+        {
+            currentBlockIndex = -1;
+        }
+
+        MDMarkdownChangedNotification.InvokeAsync(Model);
+    }
+}

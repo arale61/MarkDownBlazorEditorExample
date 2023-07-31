@@ -7,18 +7,18 @@
 
 @code {
     [Parameter]
-    public MDBlock Line { get; set; }
+    public MDBlock? Block { get; set; }
 
     [Parameter]
-    public EventCallback<int> LineSelected { get; set; }
+    public EventCallback<int> BlockSelected { get; set; }
 
     [Parameter]
-    public MarkdownPipeline MDPipeline { get; set; }
+    public MarkdownPipeline? MDPipeline { get; set; }
 
-    private string HtmlContent { get { return Markdown.ToHtml(Line.Content, MDPipeline); } }
+    private string HtmlContent { get { return Markdown.ToHtml(Block?.Content ?? string.Empty, MDPipeline); } }
 
     private void NotifyMDLineSelected(MouseEventArgs e)
     {
-        LineSelected.InvokeAsync(Line.Position);
+        BlockSelected.InvokeAsync(Block?.Position ?? -1);
     }
 }

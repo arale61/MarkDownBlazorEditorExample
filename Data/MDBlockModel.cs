@@ -4,11 +4,20 @@ public class MDBlockModel
 {
     private List<MDBlock> blocks = new List<MDBlock>();
 
-    public MDBlockModel(IEnumerable<MDBlock>? initialBlocks)
+    public MDBlockModel(IEnumerable<MDBlock>? initialBlocks = null)
     {
         if(initialBlocks != null)
         {
             blocks.AddRange(initialBlocks);
+        }
+    }
+
+    private MDBlock? lastEditedBlock = null;
+    public MDBlock? LastEditedBlock 
+    {
+        get 
+        {
+            return lastEditedBlock;
         }
     }
 
@@ -35,6 +44,8 @@ public class MDBlockModel
                 
                 blocks = firstPart;
 
+                lastEditedBlock = editedBlock;
+
                 return true;
             }
             else
@@ -60,6 +71,7 @@ public class MDBlockModel
             if(!string.IsNullOrEmpty(editedBlock.Content.Trim().Trim('\r','\n')))
             {
                 blocks.Add(new MDBlock(editedBlock.Position + 1, ""));
+                lastEditedBlock = editedBlock;
                 return true;
             }
         }
@@ -70,5 +82,14 @@ public class MDBlockModel
     public List<MDBlock> GetBlocks()
     {
         return blocks;
+    }
+
+    public string GetMarkdown()
+    {
+        var rcontents = blocks
+            .Where(b => !string.IsNullOrEmpty(b.Content.Trim('\r','\n')))
+            .Select((b) => $"{b.Content}").ToList();
+
+        return String.Join("\n", rcontents);
     }
 }

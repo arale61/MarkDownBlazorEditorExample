@@ -1,60 +1,32 @@
 @using BlazorApp.Data
 
 <div class="container-fluid">
-Number of Blocks: <input @bind="numberOfBlocks" class="form-control" readonly />
-Number of rows: <input @bind="rows" class="form-control" readonly />
+Number of Blocks: <input value="@GetNumberOfBlocks()" class="form-control" readonly />
+Number of rows: <input value="@GetNumberOfRows()" class="form-control" readonly />
 <br />
 Code:
 <br />
 <br />
 <p>
-    <textarea 
-        @bind="rawContent" 
-        rows="@rows"
+    <textarea  
+        rows="@GetNumberOfRows()"
         class="form-control"
         readonly
-        ></textarea>
+        >@Model.GetMarkdown()</textarea>
 </p>
 </div>
 
 @code {
     [Parameter]
-    public List<MDBlock> Blocks { get; set; } = new List<MDBlock>();
+    public MDBlockModel Model { get; set; } = new MDBlockModel();
 
-    private string rawContent = string.Empty;
-
-    private int numberOfBlocks
+    private int GetNumberOfBlocks()
     {
-        get
-        {
-            return Blocks.Count();
-        }
-        set
-        {
-
-        }
-
+        return Model.GetBlocks().Where((b)=>!string.IsNullOrWhiteSpace(b.Content.Trim('\r','\n'))).Count();
     }
 
-    private int rows 
+    private int GetNumberOfRows()
     { 
-        get 
-        {
-            return Blocks
-                    .Sum((b)=>b.Content.Split("\n").Count()) + 1;
-        }
-        set
-        {
-
-        }
-    } 
-
-    protected override void OnParametersSet()
-    {
-        var contents = Blocks
-            .Where(b => !string.IsNullOrEmpty(b.Content.Trim('\r','\n')))
-            .Select((b) => $"{b.Content}").ToList();
-
-        rawContent = String.Join("\n", contents);
+        return Model.GetMarkdown().Split("\n").Count() + 1;
     }
 }

@@ -5,72 +5,42 @@
 @using Markdig
 @using BlazorApp.Data
 
-<h1>Markdown Editor</h1>
-<br/>
-<dl>
-  <dt>Blocks</dt>
-  <dd>Create by blocks your <strong>Markdown</strong> file.</dd>
-  <dt>Logical Structure</dt>
-  <dd>Create as appropiate the blocks composing your document.</dd>
-  <dt>Usage</dt>
-  <dd>Inside a block you can add new lines pressing <kbd><kbd>ctrl</kbd> + <kbd>enter</kbd></kbd></dd>
-  <dd>Inside a block you can add <strong>tabs</strong> pressing <kbd>tab</kbd>. <em>(todo: reset cursor position)</em></dd>
-</dl>
+<h1>Markdown Editor Example</h1>
 
-<div class="container-fluid border border-bottom-0">
-<br />
-@foreach(var block in Blocks)
-{
-    if(currentBlockIndex == block.Position)
-    {
-        <MDEdit Block="@block" MDBlockEdited="BlockEdited" />
-    }
-    else
-    {
-        <MDViewer Line="@block" LineSelected="NewBlockSelected" MDPipeline="@pipeline" />
-    }
-}
+<div>
+    <br/>
+    <dl>
+    <dt>Blocks</dt>
+    <dd>Create by blocks your <strong>Markdown</strong> file.</dd>
+    <dt>Logical Structure</dt>
+    <dd>Create as appropiate the blocks composing your document.</dd>
+    <dt>Usage</dt>
+    <dd>Inside a block you can add new lines pressing <kbd><kbd>ctrl</kbd> + <kbd>enter</kbd></kbd></dd>
+    <dd>Inside a block you can add <strong>tabs</strong> pressing <kbd>tab</kbd>. <em>(todo: reset cursor position)</em></dd>
+    </dl>
+
+    <br />
+
+    <MDEditor MDMarkdownChangedNotification="MarkdownChanged"  />
+    <br/>
+
+    <h2>Full Markdown code</h2>
+
+    <br />
+
+    <p class="text-success"><em>@lastEditedMessage</em></p>
+
+    <MDFullViewer Model="@Model" />
 </div>
-<br/>
-
-<h2>Full Markdown code</h2>
-
-<br />
-
-<MDFullViewer Blocks="@Blocks" />
 
 @code {   
-    private MDBlockModel Model = new MDBlockModel(new List<MDBlock>() { new MDBlock(0,"# Test"), new MDBlock(1,"## Test 2"), new MDBlock(2,"### Test 3") });
+    private MDBlockModel Model { get; set; } = new MDBlockModel(new List<MDBlock>() { new MDBlock(0,"# Test"), new MDBlock(1,"## Test 2"), new MDBlock(2,"### Test 3") });
 
-    private List<MDBlock> Blocks 
-    {
-        get
-        {
-            return Model.GetBlocks().Where((b)=>!string.IsNullOrWhiteSpace(b.Content.Trim('\r','\n')) || b.Position == currentBlockIndex).ToList();
-        }
-        set
-        {
-            
-        }
-    }
-    private int currentBlockIndex = -1;
-    private MDBlock lastLineEdited = null;
-    private MarkdownPipeline pipeline = new MarkdownPipelineBuilder().UseAdvancedExtensions().Build();
+    private string lastEditedMessage = string.Empty;
 
-    private void NewBlockSelected(int blockNumber)
+    private void MarkdownChanged(MDBlockModel lastMarkDown)
     {
-        currentBlockIndex = blockNumber;
-    }
-
-    private void BlockEdited(MDBlock block)
-    {
-        if (Model.HandleBlockEdited(block))
-        {
-            currentBlockIndex = block.Position + 1;
-        } 
-        else
-        {
-            currentBlockIndex = -1;
-        }
+        this.Model = lastMarkDown;
+        lastEditedMessage = $"Edited on {DateTime.Now.ToLongTimeString()} at block #{lastMarkDown.LastEditedBlock?.Position}";
     }
 }
