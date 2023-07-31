@@ -3,6 +3,12 @@
 ## This is just an example
 This example uses [**Markdig**](https://github.com/xoofx/markdig) as the **Markdown parser**.
 
+[**Markdig**](https://github.com/xoofx/markdig) is licensed with [BSD-Clause 2 license](https://github.com/xoofx/markdig/blob/master/license.txt).
+
+This example uses [**Blazored.LocalStorage**](https://github.com/Blazored/LocalStorage) as the **Local Storage Service**.
+
+[**Blazored.LocalStorage**](https://github.com/Blazored/LocalStorage) is licensed with [MIT license](https://github.com/Blazored/LocalStorage/blob/main/LICENSE).
+
 Based on **Blazor Server** template, and **composed by**:
 - **Pages/MDEditor.razor**: Main component. Presents rendered blocks using the MDViewer.razor component. And Presents the MDEditor for the selected block.
 - **Pages/MDViewer.razor**: Child component for the MDEditor. Used to display HTML projection for Markdown.
@@ -13,11 +19,17 @@ Based on **Blazor Server** template, and **composed by**:
 - **Data/MDBlockModel**: Data Model for holding MDBlock logic. Used by the MDEditor component.
 
 
-[**Markdig**](https://github.com/xoofx/markdig) is licensed with [BSD-Clause 2 license](https://github.com/xoofx/markdig/blob/master/license.txt).
-
 ## Motivation
 After being watching some **#viciostv** was curious about **Markdig** and also about **Blazor**.
-I drafted this simple sample for it.
+I drafted this simple example for it.
+
+The **example** tries to present a **Markdown editor** that works by **blocks**.
+
+Each **block** contains a portion of the markdown.
+
+This enables the user to **edit** the current block while having the other blocks **rendered**.
+
+It also uses **LocalStorage** for storing the **Markdown model** used by the **editor**.
 
 ## How to test it
 
