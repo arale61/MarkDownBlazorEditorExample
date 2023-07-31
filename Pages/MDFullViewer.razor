@@ -22,7 +22,7 @@ Code:
 
     private int GetNumberOfBlocks()
     {
-        return Model.GetBlocks().Where((b)=>!string.IsNullOrWhiteSpace(b.Content.Trim('\r','\n'))).Count();
+        return Model.GetBlocks().Count();
     }
 
     private int GetNumberOfRows()

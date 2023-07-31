@@ -23,7 +23,8 @@ public class MDBlockModel
 
     public bool HandleBlockEdited(MDBlock editedBlock)
     {
-        var rem = blocks.Count() - 1 - editedBlock.Position;
+        var rem = blocks.Count() - 1;
+        lastEditedBlock = editedBlock;
 
         if (rem > 0)
         {
@@ -43,8 +44,6 @@ public class MDBlockModel
                 firstPart.AddRange(secondPart);
                 
                 blocks = firstPart;
-
-                lastEditedBlock = editedBlock;
 
                 return true;
             }
@@ -66,13 +65,21 @@ public class MDBlockModel
                 return false;
             }
         }
+        else if (rem < 0)
+        {
+            blocks.Add(new MDBlock(0, "# Dummy"));
+            return false;
+        }
         else if (rem == 0)
         {
             if(!string.IsNullOrEmpty(editedBlock.Content.Trim().Trim('\r','\n')))
             {
                 blocks.Add(new MDBlock(editedBlock.Position + 1, ""));
-                lastEditedBlock = editedBlock;
                 return true;
+            }
+            else
+            {
+                return false;
             }
         }
 

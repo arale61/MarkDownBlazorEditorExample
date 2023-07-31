@@ -15,6 +15,7 @@
     }
 }
 </div>
+<input value="@currentBlockIndex" readonly />
 
 
 @code {
@@ -52,7 +53,11 @@
         if (Model.HandleBlockEdited(block))
         {
             currentBlockIndex = block.Position + 1;
-        } 
+        }
+        else if(Model.GetBlocks().Count() == 1 && string.IsNullOrEmpty(block.Content.Trim('\r','\n')))
+        {
+            currentBlockIndex = block.Position;
+        }
         else
         {
             currentBlockIndex = -1;
